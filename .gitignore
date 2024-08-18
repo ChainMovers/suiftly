@@ -1,9 +1,3 @@
-# Ignore suibase outputs
-workdirs/**
-scripts/tests/result.txt
-scripts/templates/common/
-typescript/vscode-extension/out/
-
 # File system
 .DS_Store
 desktop.ini
@@ -41,9 +35,6 @@ tmp
 *.mvsm
 *.mv
 output.bpl
-
-# Move build output (specific to suibase repo)
-**/move/build
 
 # logs
 wallet.log.*
@@ -124,7 +115,7 @@ docs/src/.vuepress/.cache/
 docs/src/.vuepress/.temp/
 docs/src/.vuepress/dist/
 
-# PNPM is used by suibase Github Action for website deployment.
+# PNPM is used by Github Action for website deployment.
 # package.json and pnpm-lock.yaml are needed to be commited but
 # only by the site maintainer.
 docs/pnpm-lock.yaml
