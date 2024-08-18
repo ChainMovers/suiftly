@@ -1,0 +1,81 @@
+// place your custom styles here
+button.sidebar-heading {
+  font-size: 1em;
+  //padding-inline-start: 1rem;
+}
+
+#main-title {
+  -webkit-text-fill-color: #6fbcf0;
+}
+
+a:has(polygon) {
+  color: #6fbcf0;
+}
+
+.hint-container.details {
+  padding-top: 1rem;
+  margin-block-start: 0em;
+  padding-bottom: 0.5rem;
+}
+
+.hint-container.details summary {
+  padding-top: 0.5rem;
+  padding-bottom: 0rem;
+}
+
+.hint-container.note summary {
+  padding-top: 0.5rem;
+  padding-bottom: 0rem;
+}
+
+.hint-container-title {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.hint-container p {
+  margin-top: 0.2rem;
+  margin-bottom: 0.2rem;
+}
+
+.footer a {
+  color: #6fbcf0;
+  font-weight: unset;
+}
+.footer-wrapper .footer {
+  font-size: 12px;
+}
+
+.footer-wrapper .copyright {
+  font-size: 12px;
+}
+
+.footer-wrapper {
+  padding-top: unset;
+  padding-bottom: unset;
+}
+
+//#main-content.page {
+//  padding-inline-start: calc(var(--sidebar-space) + 0.5rem);
+//}
+
+// Style for code group
+.code-info-title {
+  color: #999999;
+  transform: translateY(70%);
+  display: flex;
+  justify-content: center;
+  font-size: 13.6px;
+}
+
+.code-group__ul {
+  display: flex;
+}
+
+.code-group__nav {
+  padding-right: 10px;
+}
+
+.flex-grow {
+  flex-grow: 1;
+}

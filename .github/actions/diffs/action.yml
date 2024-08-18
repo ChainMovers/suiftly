@@ -1,0 +1,33 @@
+name: Detect Changes
+description: Variables indicating the type of change to the repos
+
+outputs:
+  isDoc:
+    description: True when changes related to docs/website.
+    value: "${{ steps.diff.outputs.isDoc }}"
+  isRust:
+    description: True when changes related to Rust.
+    value: "${{ steps.diff.outputs.isRust }}"
+  isMove:
+    description: True when changes related to Move.
+    value: "${{ steps.diff.outputs.isMove }}"
+
+
+runs:
+  using: composite
+  steps:
+    - name: Detect Changes
+      uses: dorny/paths-filter@v3.0.2
+      id: diff
+      with:
+        base: ${{ github.ref }}
+        filters: |
+          isRust:
+            - 'rust/**'
+          isDoc:
+            - 'docs/**'
+            - 'README.md'
+            - '.github/workflows/deploy-docs.yml'
+          isMove:
+            - 'move/sources/**'
+            - 'Move.toml'
