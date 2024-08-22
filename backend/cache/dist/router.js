@@ -1,5 +1,4 @@
 import express from 'express';
-import { getAnotherTest, getTest } from './controller.js';
+import { getBlob } from './controller.js';
 export const router = express.Router();
-router.get('/test', getTest);
-router.get('/another-test', getAnotherTest);
+router.get('/:id', getBlob);
