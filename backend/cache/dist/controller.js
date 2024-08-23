@@ -9,6 +9,8 @@ import { spawn } from 'child_process';
 // Unencoded size: 165 KiB
 // Encoded size (including metadata): 62.0 MiB
 // Sui object ID: 0x0ebad3b13ee9bc64f8d6370e71d3408a43febaa017a309d2367117afe144ae8c
+// Cache-Control value initialized once
+const blobCacheControl = process.env.BLOB_CACHE_CONTROL || 'public, max-age=30';
 export const getBlob = async (req, res) => {
     const { id } = req.params;
     if (!id) {
@@ -49,13 +51,10 @@ export const getBlob = async (req, res) => {
     let attempts = 0;
     while (!mime_parsed && attempts < 3) {
         try {
-            console.info('A');
             await fs.promises.access(jsonPath, fs.constants.F_OK);
             // Read the meta JSON file and extract the MIME type
             const meta = await fs.promises.readFile(jsonPath, 'utf8');
-            console.info('meta=', meta);
             const { mime } = JSON.parse(meta);
-            console.info('mime=', mime);
             // TODO: Validate mime_parsed
             mime_parsed = mime;
         }
@@ -133,8 +132,7 @@ export const getBlob = async (req, res) => {
     const options = {
         headers: {
             'Content-Type': mime_parsed,
-            // 'Content-Disposition': 'inline; filename="<id>.<mime extension?>"',
-            'Cache-Control': 'public, max-age=60', // TODO: Adjust in production.
+            'Cache-Control': blobCacheControl,
         },
     };
     // Stream the binary as response.
