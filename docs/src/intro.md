@@ -9,8 +9,8 @@ Adds fast Walrus loading to your Web2/Web3 sites with:
 
 The NPM packages will provide:
   - Automatic CDN to Walrus failover
-  - Optional convenient react components (e.g. `<ImageBlob src="..." blobId="..." />`)
-  - "Trust your CDN... but verify" feature. Allows your client code to validate the CDN response.
+  - React components helper (e.g. `<ImageBlob src="..." blob_id="..." />`)
+  - "Trust your CDN... but verify" feature. Makes your client validate the CDN response.
 
 
 Project Status: **Planning**
