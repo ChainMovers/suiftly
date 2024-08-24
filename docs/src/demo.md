@@ -15,3 +15,13 @@ Notes:
 
 
 Stay tuned, this is just the first feature!
+
+
+# How to measure CDN performance?
+(1) Open an incognito window and the dev tools ( Ctrl-Shift-I )
+(2) Select Network and "Disable Cache"
+(3) Refresh to do a measurement.
+(4) You can observe CDN headers
+
+
+![Chrome Dev Tools](./.vuepress/public/assets/chrome-dev-tool-2.png)
