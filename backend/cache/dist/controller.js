@@ -11,6 +11,7 @@ import { spawn } from 'child_process';
 // Sui object ID: 0x0ebad3b13ee9bc64f8d6370e71d3408a43febaa017a309d2367117afe144ae8c
 // Cache-Control value initialized once
 const blobCacheControl = process.env.BLOB_CACHE_CONTROL || 'public, max-age=30';
+const SIZE_LIMIT = 209715200;
 export const getBlob = async (req, res) => {
     const { id } = req.params;
     if (!id) {
@@ -46,17 +47,32 @@ export const getBlob = async (req, res) => {
     // for this request is stored in:
     //    $HOME/cache/prefix1/prefix2/<id>.blob
     const jsonPath = path.resolve(homePath, 'cache', prefix_1, prefix_2, `${id}.json`);
-    // Read the meta JSON file and extract the MIME type.
+    // Read the meta JSON file and extract the MIME type and size.
     let mime_parsed = undefined;
+    let blob_size = undefined;
     let attempts = 0;
     while (!mime_parsed && attempts < 3) {
         try {
             await fs.promises.access(jsonPath, fs.constants.F_OK);
             // Read the meta JSON file and extract the MIME type
             const meta = await fs.promises.readFile(jsonPath, 'utf8');
-            const { mime } = JSON.parse(meta);
-            // TODO: Validate mime_parsed
-            mime_parsed = mime;
+            try {
+                const parsedMeta = JSON.parse(meta);
+                mime_parsed = parsedMeta.mime;
+                blob_size = parsedMeta.size;
+            }
+            catch (parseError) {
+                console.error(`Error meta parsing: ${parseError} id: ${id}`);
+                return res.status(500).send('Internal Server Error (meta parsing)');
+            }
+            if (blob_size) {
+                if (blob_size > SIZE_LIMIT) {
+                    console.error(`Error: Blob size exceeds limit ${blob_size} > ${SIZE_LIMIT}`);
+                    return res
+                        .status(404)
+                        .send(`Blob size ${blob_size} not supported by Suiftly (${SIZE_LIMIT} limit)`);
+                }
+            }
         }
         catch (error) {
             let return_server_error = true;
@@ -113,7 +129,9 @@ export const getBlob = async (req, res) => {
                 return res.status(404).send('Blob MIME type not supported by Suiftly');
             }
             else if (status_code === 4) {
-                return res.status(404).send('Blob size not supported by Suiftly');
+                return res
+                    .status(404)
+                    .send(`Blob size not supported by Suiftly (${SIZE_LIMIT} limit)`);
             }
             else if (starting_shell_process_failed) {
                 return res.status(500).send('Internal Server Error (shell call)');
@@ -125,7 +143,12 @@ export const getBlob = async (req, res) => {
         attempts++;
     }
     if (!mime_parsed) {
+        console.error('Error meta parsing: mime not found');
         return res.status(500).send('Internal Server Error (timeout)');
+    }
+    if (!blob_size) {
+        console.error('Error meta parsing: size not found');
+        return res.status(500).send('Internal Server Error (size missing)');
     }
     const blobPath = path.resolve(homePath, 'cache', prefix_1, prefix_2, `${id}.blob`);
     // Set headers and options
