@@ -48,6 +48,6 @@ actions:
 #    link: https://discord.com/invite/Erb6SwsVbH
 ---
 
-<div><h1 align="center" style="color: gray">... load most Sui Walrus Blob in less than 50 milliseconds</h1></div>
+<div><h1 align="center" style="color: gray">... load most Sui Walrus Blob in less than 100 milliseconds</h1></div>
 
 

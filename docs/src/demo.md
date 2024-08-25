@@ -1,27 +1,30 @@
 
-# Try It! Free. No Account Required
+# Try it!     (Free. No account required.)
 
 You can load any Blob ID with the following URL pattern:
 
 `https://cdn.suiftly.io/blob/{Any Blob ID}`
 
-Example image: https://cdn.suiftly.io/blob/fK7v0bft1JqVbxQaM_KJAYkejbY9FgU9doqZwg7smw8
+Demo: https://cdn.suiftly.io/blob/fK7v0bft1JqVbxQaM_KJAYkejbY9FgU9doqZwg7smw8
 
-Notes:
-   - CDN response has proper Content-Type header (e.g. image/png)
-   - First click is slower because the blob is being retrieved from Walrus and then cached by the CDN.
-   - Blob size limited to 200 MiB (for devnet).
-   - DDoS protected with 10 PoPs spread globally.
+**Features**
+  - 10 edge servers spread globally. DDoS protected.
+  - CDN response with proper Content-Type header (e.g. image/png)
+  - Backend caching to minimize re-aggregation from Walrus.
+
+**Notes**
+  - First click is slower because the blob is being retrieved from Walrus and then cached.
+  - Blob size limited to 200 MiB (for devnet).
 
 
-Stay tuned, this is just the first feature!
 
+See [documentation](intro.md) for more features!
 
-# How to measure CDN performance?
-(1) Open an incognito window and the dev tools ( Ctrl-Shift-I )
-(2) Select Network and "Disable Cache"
-(3) Refresh to do a measurement.
-(4) You can observe CDN headers
+# How to measure CDN performances?
+(1) Open Chrome incognito and the dev tools ( Ctrl-Shift-I ).
+(2) Select Network and "Disable cache".
+(3) Refresh page to measure load time.
+(4) You can observe the CDN headers.
 
 
 ![Chrome Dev Tools](./.vuepress/public/assets/chrome-dev-tool-2.png)
