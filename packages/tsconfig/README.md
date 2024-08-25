@@ -1,0 +1,1 @@
+tsconfig configuration from which all other packages inherit from.
