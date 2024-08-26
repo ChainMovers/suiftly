@@ -42,8 +42,8 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: '9.1.0'
-          run_install: true
+          version: 'latest'
+          run_install: false
 
       - name: Copy pnpm dependency files
         run: |
@@ -56,6 +56,10 @@ jobs:
           node-version: 20
           cache: pnpm
           cache-dependency-path: 'docs/pnpm-lock.yaml'
+
+      - name: Install pnpm dependencies for docs
+        run: pnpm install
+        working-directory: docs
 
       - name: Build Docs
         env:
