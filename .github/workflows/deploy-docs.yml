@@ -39,16 +39,17 @@ jobs:
         with:
           python-version: '3.x'
 
+      - name: Copy pnpm dependency files
+        run: |
+          cp -f $GITHUB_WORKSPACE/docs/ci/pnpm-lock.yaml.ci $GITHUB_WORKSPACE/docs/pnpm-lock.yaml
+          cp -f $GITHUB_WORKSPACE/docs/ci/package.json.ci $GITHUB_WORKSPACE/docs/package.json
+
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 'latest'
           run_install: false
-
-      - name: Copy pnpm dependency files
-        run: |
-          cp -f $GITHUB_WORKSPACE/docs/ci/pnpm-lock.yaml.ci $GITHUB_WORKSPACE/docs/pnpm-lock.yaml
-          cp -f $GITHUB_WORKSPACE/docs/ci/package.json.ci $GITHUB_WORKSPACE/docs/package.json
+          package_json_file: 'docs/package.json'
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
