@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Detect Changes
-        uses: "./.github/actions/diffs"
+        uses: './.github/actions/diffs'
         id: diff
 
   deploy-gh-pages:
@@ -37,12 +37,12 @@ jobs:
       - name: Install Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.x"
+          python-version: '3.x'
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: "latest"
+          version: '9.1.0'
           run_install: true
 
       - name: Copy pnpm dependency files
@@ -55,7 +55,7 @@ jobs:
         with:
           node-version: 20
           cache: pnpm
-          cache-dependency-path: "docs/pnpm-lock.yaml"
+          cache-dependency-path: 'docs/pnpm-lock.yaml'
 
       - name: Build Docs
         env:
