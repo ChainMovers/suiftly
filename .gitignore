@@ -1,6 +1,7 @@
 # File system
 .DS_Store
 desktop.ini
+*.pem
 
 # Thumbnails
 ._*
@@ -96,9 +97,14 @@ pip-selfcheck.json
 
 # Node.js
 node_modules
+.pnp
+.pnp.js
 .tsbuildinfo
 *.tsbuildinfo
 .turbo
+
+# Vercel
+.vercel
 
 # Test outputs
 playwright-report/
@@ -121,7 +127,7 @@ docs/src/.vuepress/dist/
 docs/pnpm-lock.yaml
 docs/package.json
 
-# Other package "lock" should *never* be pushed.
+# pnpm is used. Other package "lock" should *never* be pushed.
 package-lock.json
 yarn.lock
 

@@ -1,0 +1,19 @@
+{
+    "name": "@suiftly/test-config",
+    "version": "0.0.0",
+    "private": true,
+    "files": [
+        "test-setup.js",
+        "test-teardown.js"
+    ],
+    "peerDependencies": {
+        "jest-dev-server": "^10.0.0",
+        "undici": "^6.19.8",
+        "whatwg-fetch": "^3.6.20"
+    },
+    "devDependencies": {
+        "@jest/types": "^29.6.3",
+        "undici": "^6.19.8",
+        "whatwg-fetch": "^3.6.20"
+    }
+}

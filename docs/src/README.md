@@ -4,7 +4,7 @@ icon: home
 title: Home
 heroImage: /logo.png
 heroText: Suiftly
-tagline: CDN Optimization for Sui Walrus
+tagline: CDN Optimizations for Sui Walrus
 actions:
   - text: Try it!
     link: /demo.md
