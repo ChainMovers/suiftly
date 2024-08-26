@@ -63,7 +63,7 @@ jobs:
           NODE_OPTIONS: --max_old_space_size=8192
         run: |-
           cd docs
-          pnpm run install
+          pnpm install
           pnpm run docs:build
 
           > src/.vuepress/dist/.nojekyll
