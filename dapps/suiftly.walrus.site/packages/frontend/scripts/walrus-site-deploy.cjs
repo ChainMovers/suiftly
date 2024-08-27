@@ -33,9 +33,9 @@ const main = async () => {
   // then publish the site to Walrus Sites.
   if (siteObjectId == null) {
     console.log('Publishing the app to Walrus Sites...')
-    const { stdout, stderr } = await exec(
-      `site-builder --config ${walrusConfigPathFull} --wallet ${WALLET_CONFIG_PATH_FULL} publish ${sitePathFull}`
-    )
+    const exec_command = `site-builder --config ${walrusConfigPathFull} --wallet ${WALLET_CONFIG_PATH_FULL} publish ${sitePathFull}`
+    console.log(`exec: ${exec_command}`)
+    const { stdout, stderr } = await exec(exec_command)
 
     // Get the site object ID from the publish command output.
     stdout.on('data', async (data) => {
@@ -61,6 +61,10 @@ const main = async () => {
 
     stderr.on('data', async (error) => {
       console.error(error)
+      // Do not exit if the line starts with "[warn]"
+      if (error.startsWith('[warn]')) {
+        return
+      }
       process.exit()
     })
 
@@ -68,7 +72,9 @@ const main = async () => {
   }
 
   if (siteObjectId == null) {
-    console.error('~ The script could not find the site object ID in the output.')
+    console.error(
+      '~ The script could not find the site object ID in the output.'
+    )
     console.error(
       '~ If you see it, please add WALRUS_SITE_OBJECT_ID=[site object ID from the output] into packages/frontend/.env.local manually.'
     )
