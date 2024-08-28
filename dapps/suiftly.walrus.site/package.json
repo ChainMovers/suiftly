@@ -5,8 +5,7 @@
   "scripts": {
     "dev": "pnpm frontend:dev",
     "start": "pnpm dev",
-    "test": "pnpm backend:test",
-    "build": "pnpm backend:build && pnpm frontend:build",
+    "build": "pnpm frontend:build",
     "lint": "pnpm frontend:lint",
     "format": "pnpm frontend:format",
 

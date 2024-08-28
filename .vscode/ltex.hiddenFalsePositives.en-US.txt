@@ -1,0 +1,1 @@
+{"rule":"COMP_THAN","sentence":"^\\Q(First click will be slower as it will be aggregated and cached for the next fast requests)\\E$"}
