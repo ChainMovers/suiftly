@@ -3,6 +3,7 @@
     "remoteCache": {
         "signature": true
     },
+    "globalEnv": ["HOME", "BLOB_CACHE_CONTROL", "PORT"],
     "tasks": {
         "build": {
             "dependsOn": [
