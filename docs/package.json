@@ -25,6 +25,7 @@
         "chart.js": "^4.4.3",
         "flowchart.ts": "^3.0.0",
         "katex": "^0.16.11",
-        "mermaid": "^10.9.1"
+        "mermaid": "^10.9.1",
+        "suiftly.io": "link:"
     }
 }

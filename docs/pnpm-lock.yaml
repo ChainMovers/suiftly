@@ -20,6 +20,9 @@ importers:
       mermaid:
         specifier: ^10.9.1
         version: 10.9.1
+      suiftly.io:
+        specifier: 'link:'
+        version: 'link:'
     devDependencies:
       '@vuepress/bundler-vite':
         specifier: 2.0.0-rc.14

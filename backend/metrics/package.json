@@ -1,9 +1,9 @@
 {
-    "name": "cache",
+    "name": "metrics",
     "version": "0.1.0",
-    "description": "suiftly.io backend server",
-    "type": "module",
+    "description": "",
     "main": "index.js",
+    "type": "module",
     "scripts": {
         "preinstall": "npx only-allow pnpm",
         "check": "tsc",
@@ -11,22 +11,21 @@
         "start": "node dist/server.js",
         "dev": "NODE_ENV=development tsx watch src/server"
     },
+    "keywords": [],
     "author": "Suiftly.io",
     "license": "Apache 2.0",
     "dependencies": {
-        "@types/express-serve-static-core": "^4.19.5",
-        "cache": "link:",
-        "cors": "^2.8.5",
+        "@types/node": "^22",
         "dotenv": "^16.4.5",
-        "express": "^4.19.2"
+        "metrics": "link:",
+        "node-cron": "^3.0.3",
+        "node-fetch": "^3.3.2",
+        "typescript": "^5.5.4",
+        "unzipper": "^0.12.3"
     },
     "devDependencies": {
-        "@types/cors": "^2.8.17",
-        "@types/express": "^4.17.21",
-        "@types/node": "^22.5.0",
         "rimraf": "^6.0.1",
         "tsc-alias": "^1.8.10",
-        "tsx": "^4.17.0",
-        "typescript": "^5.5.4"
+        "tsx": "^4.17.0"
     }
 }

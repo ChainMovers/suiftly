@@ -1,6 +1,6 @@
-import path from 'path';
-import * as fs from 'fs';
 import { spawn } from 'child_process';
+import * as fs from 'fs';
+import path from 'path';
 // Test Blob Info
 //
 // MIME type: image/png
@@ -103,14 +103,14 @@ export const getBlob = async (req, res) => {
             let starting_shell_process_failed = false;
             const loadBlob = path.resolve(homePath, 'suiftly-ops/scripts/load-blob');
             const loadBlobProcess = spawn(loadBlob, [id]);
-            await new Promise((resolve) => {
-                loadBlobProcess.once('close', (code) => {
+            await new Promise(resolve => {
+                loadBlobProcess.once('close', code => {
                     if (code !== null) {
                         status_code = code;
                     }
                     resolve();
                 });
-                loadBlobProcess.once('error', (err) => {
+                loadBlobProcess.once('error', err => {
                     console.error('Failed to start load-blob process:', err);
                     starting_shell_process_failed = true;
                     resolve();
@@ -129,9 +129,7 @@ export const getBlob = async (req, res) => {
                 return res.status(404).send('Blob MIME type not supported by Suiftly');
             }
             else if (status_code === 4) {
-                return res
-                    .status(404)
-                    .send(`Blob size not supported by Suiftly (${SIZE_LIMIT} limit)`);
+                return res.status(404).send(`Blob size not supported by Suiftly (${SIZE_LIMIT} limit)`);
             }
             else if (starting_shell_process_failed) {
                 return res.status(500).send('Internal Server Error (shell call)');
@@ -154,12 +152,12 @@ export const getBlob = async (req, res) => {
     // Set headers and options
     const options = {
         headers: {
-            'Content-Type': mime_parsed,
             'Cache-Control': blobCacheControl,
+            'Content-Type': mime_parsed,
         },
     };
     // Stream the binary as response.
-    res.sendFile(blobPath, options, (err) => {
+    res.sendFile(blobPath, options, err => {
         if (err) {
             res.status(500).send('Error streaming blob');
         }
