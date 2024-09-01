@@ -563,11 +563,9 @@ async function updateMetrics() {
 
                 // Track unique visitors based on remoteIp
                 if (!routeMetrics.visitors_set) {
-                    console.log('First visitor:', remoteIp);
                     routeMetrics.visitors_set = new Set<string>([remoteIp]);
                     routeMetrics.visitors = 1;
                 } else if (!routeMetrics.visitors_set.has(remoteIp)) {
-                    console.log('New visitor:', remoteIp);
                     routeMetrics.visitors_set.add(remoteIp);
                     routeMetrics.visitors += 1;
                 }

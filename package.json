@@ -10,7 +10,7 @@
         "lint": "turbo run --concurrency=${TURBO_CONCURRENCY:-95.84%} test:lint",
         "style:fix": "turbo  run --concurrency=${TURBO_CONCURRENCY:-95.84%} style:fix && pnpm prettier --log-level warn --ignore-unknown --write '{.,!packages}/*'",
         "test": "turbo run --concurrency=${TURBO_CONCURRENCY:-95.84%} test:unit:browser test:unit:node",
-        "install:metrics": "cd backend/metrics && pnpm install --ignore-workspace --lockfile-dir . .",
+        "install:cdn-metrics": "cd backend/cdn-metrics && pnpm install --ignore-workspace --lockfile-dir . .",
         "install:cache": "cd backend/cache && pnpm install --ignore-workspace --lockfile-dir . .",
         "install:docs": "cd docs && pnpm install --ignore-workspace --lockfile-dir . ."
     },
