@@ -1,7 +1,8 @@
 import 'dotenv/config';
 import cors from 'cors';
 import express from 'express';
-import { router } from './router.js';
+import { blobRoutes } from './routes/blobRoutes.js';
+import { metricsRoutes } from './routes/metricsRoutes.js';
 const port = process.env.PORT || 3000;
 const app = express();
 app.use(cors());
@@ -16,7 +17,8 @@ app.get('/', (req, res) => {
     res.set('Cache-Control', 'public, max-age=86400'); // Cache 1 day
     res.send('CDN is responding.<br><br> Access your own blob with <b>https://cdn.suiftly.io/blob/<i>&ltyour_blob_id&gt</i></b>');
 });
-app.use('/blob', router);
+app.use('/blob', blobRoutes);
+app.use('/metrics', metricsRoutes);
 app.listen(port, () => {
     console.log(`App listening on port: ${port}`);
 });

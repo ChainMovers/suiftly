@@ -3,7 +3,8 @@ import 'dotenv/config';
 import cors from 'cors';
 import express from 'express';
 
-import { router } from '@/router';
+import { blobRoutes } from '@/routes/blobRoutes';
+import { metricsRoutes } from './routes/metricsRoutes';
 
 const port = process.env.PORT || 3000;
 
@@ -30,7 +31,8 @@ app.get('/', (req, res) => {
     );
 });
 
-app.use('/blob', router);
+app.use('/blob', blobRoutes);
+app.use('/metrics', metricsRoutes);
 
 app.listen(port, () => {
     console.log(`App listening on port: ${port}`);
