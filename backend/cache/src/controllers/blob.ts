@@ -2,8 +2,9 @@ import { spawn } from 'child_process';
 import { Request, Response } from 'express';
 import * as fs from 'fs';
 import path from 'path';
-import { getIdPrefixes } from '@/utils/strings';
-import { isValidBlobId } from '@/utils/validation';
+
+import { isValidBlobId } from '../common/blob';
+import { getIdPrefixes } from '../common/strings';
 
 // Test Blob Info
 //

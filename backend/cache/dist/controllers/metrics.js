@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import path from 'path';
-import { getIdPrefixes } from '../utils/strings.js';
-import { isValidBlobId } from '../utils/validation.js';
+import { isValidBlobId } from '../common/blob.js';
+import { getIdPrefixes } from '../common/strings.js';
 // Test Blob Info
 //
 // MIME type: image/png
@@ -63,8 +63,8 @@ export const getMetrics = async (req, res) => {
         // File does not exist, return "no_metrics" JSON response
         res.json({
             blobId: id,
-            status: 'no_metrics',
             message: 'No metrics accumulated yet for this blob. Metrics updated every ~24 hours.',
+            status: 'no_metrics',
         });
     }
 };

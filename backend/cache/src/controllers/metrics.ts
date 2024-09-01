@@ -1,9 +1,9 @@
-import { spawn } from 'child_process';
 import { Request, Response } from 'express';
 import * as fs from 'fs';
 import path from 'path';
-import { getIdPrefixes } from '@/utils/strings';
-import { isValidBlobId } from '@/utils/validation';
+
+import { isValidBlobId } from '@/common/blob';
+import { getIdPrefixes } from '@/common/strings';
 
 // Test Blob Info
 //
@@ -70,8 +70,8 @@ export const getMetrics = async (req: Request, res: Response) => {
         // File does not exist, return "no_metrics" JSON response
         res.json({
             blobId: id,
-            status: 'no_metrics',
             message: 'No metrics accumulated yet for this blob. Metrics updated every ~24 hours.',
+            status: 'no_metrics',
         });
     }
 };

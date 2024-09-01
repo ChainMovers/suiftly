@@ -3,6 +3,7 @@ import cors from 'cors';
 import express from 'express';
 import { blobRoutes } from './routes/blobRoutes.js';
 import { metricsRoutes } from './routes/metricsRoutes.js';
+import { viewRoutes } from './routes/viewRoutes.js';
 const port = process.env.PORT || 3000;
 const app = express();
 app.use(cors());
@@ -19,6 +20,7 @@ app.get('/', (req, res) => {
 });
 app.use('/blob', blobRoutes);
 app.use('/metrics', metricsRoutes);
+app.use('/view', viewRoutes);
 app.listen(port, () => {
     console.log(`App listening on port: ${port}`);
 });

@@ -1,6 +1,17 @@
 // Download, unzip, verify and maintain metrics in various directories
 // depending of its age and validity.
 //
+// Summary
+// -------
+//   All metrics (up to one year) are kept in local file system.
+//
+//   Data flows:
+//     DOWNLOAD_DIR -(unzip)-> UNZIP_DIR -(validated)-> RECENT_DIR
+//     DOWNLOAD_DIR -(old and present in RECENT_DIR)-> ARCHIVE_DIR
+//     RECENT_DIR files -(parsed into ~/cache)-> On success adds .done extension
+//
+// Specs
+// -----
 // The file is downloaded from the BunnyCDN logging endpoint like this:
 //   https://logging.bunnycdn.com/{mm}-{dd}-{yy}/pull_zone_id.log
 //
@@ -43,51 +54,14 @@ import { pipeline } from 'stream/promises';
 import { promisify } from 'util';
 import zlib from 'zlib';
 
+import * as metrics from './common/cdn-metrics';
+import { sortObjectKeys } from './common/utils';
+
 const EXPIRATION_RECENT_DIR = 40 * 24 * 60 * 60 * 1000; // 40 days in milliseconds
 const EXPIRATION_UNZIP_DIR = 40 * 24 * 60 * 60 * 1000;
 const EXPIRATION_DOWNLOAD_DIR = 37 * 24 * 60 * 60 * 1000; // 37 days in milliseconds
 
 const readdir = promisify(fs.readdir);
-
-// Util function to sort object keys (in-place).
-// Handles nested objects and arrays recursively.
-// Useful to sort prior to JSON.stringify
-function sortObjectKeys(obj: any): void {
-    if (typeof obj !== 'object' || obj === null) {
-        return;
-    }
-
-    if (Array.isArray(obj)) {
-        obj.forEach(sortObjectKeys);
-        return;
-    }
-
-    const keys = Object.keys(obj);
-    const sortedKeys = [...keys].sort();
-
-    // Check if the keys are already sorted
-    let isSorted = true;
-    for (let i = 0; i < keys.length; i++) {
-        if (keys[i] !== sortedKeys[i]) {
-            isSorted = false;
-            break;
-        }
-    }
-
-    if (!isSorted) {
-        sortedKeys.forEach(key => {
-            const value = obj[key];
-            delete obj[key];
-            obj[key] = value;
-            sortObjectKeys(value);
-        });
-    } else {
-        // If already sorted, still need to sort nested objects
-        keys.forEach(key => {
-            sortObjectKeys(obj[key]);
-        });
-    }
-}
 
 // Load more .env specific to this app (and interpolate $HOME)
 const HOME_DIR = process.env.HOME || process.env.USERPROFILE || '';
@@ -99,54 +73,17 @@ for (const key in process.env) {
     }
 }
 
-// Type guard on string to supported Route conversion.
-const ROUTES = ['blob', 'icon48x48', 'icon96x96', 'icon256x256', 'meta', 'metrics', 'view'] as const;
-type Route = (typeof ROUTES)[number];
-const isValidRoute = (route: string): route is Route => {
-    return ROUTES.includes(route as Route);
-};
-
-// Defines how metrics are stored in-memory and on disk (JSON).
-interface RouteDayMetrics {
-    hits: number;
-    hitsEdge: number;
-    visitors: number;
-    visitors_set?: Set<string>;
-}
-
-interface DailyMetrics {
-    [date: string]: Partial<Record<Route, RouteDayMetrics>>;
-}
-
-interface Metrics {
-    blobId: string;
-    daily: DailyMetrics;
-    sizes: Partial<Record<Route, number>>;
-}
-
-// In-memory map only for while parsing a log file.
-interface MetricsMap {
-    [blobId: string]: Metrics;
-}
-
-// All metrics (up to one year) are kept in local file system.
-//
-// The data flows are:
-//   DOWNLOAD_DIR -(unzip)-> UNZIP_DIR -(validated)-> RECENT_DIR
-//   DOWNLOAD_DIR -(present in RECENT_DIR)-> ARCHIVE_DIR
-const CDN_METRICS_DIR = process.env.CDN_METRICS_DIR || `${HOME_DIR}/cdn-metrics`;
-
 // Last 30 days downloaded files (compressed)
-const DOWNLOAD_DIR = process.env.CDN_METRICS_DOWNLOAD_DIR || `${CDN_METRICS_DIR}/download`;
+const DOWNLOAD_DIR = process.env.CDN_METRICS_DOWNLOAD_DIR || `${metrics.CDN_METRICS_DIR}/download`;
 
 // Intermediate directory to validate the unzip of a given day.
-const UNZIP_DIR = process.env.CDN_METRICS_UNZIP_DIR || `${CDN_METRICS_DIR}/unzipped`;
+const UNZIP_DIR = process.env.CDN_METRICS_UNZIP_DIR || `${metrics.CDN_METRICS_DIR}/unzipped`;
 
 // Last 30 days validated unzipped logs.
-const RECENT_DIR = process.env.CDN_METRICS_RECENT_DIR || `${CDN_METRICS_DIR}/recent`;
+const RECENT_DIR = process.env.CDN_METRICS_RECENT_DIR || `${metrics.CDN_METRICS_DIR}/recent`;
 
 // Last one year zipper logs.
-const ARCHIVE_DIR = process.env.CDN_METRICS_ARCHIVE_DIR || `${CDN_METRICS_DIR}/archive`;
+const ARCHIVE_DIR = process.env.CDN_METRICS_ARCHIVE_DIR || `${metrics.CDN_METRICS_DIR}/archive`;
 
 // URL fragments used to download daily metrics.
 const PREFIX_URL = process.env.CDN_METRICS_PREFIX_URL || '';
@@ -185,7 +122,7 @@ function prepareSetup(): boolean {
         return false;
     }
 
-    if (!CDN_METRICS_DIR) {
+    if (!metrics.CDN_METRICS_DIR) {
         console.error('Missing environment variables: CDN_METRICS_DIR');
         return false;
     }
@@ -533,7 +470,7 @@ async function updateMetrics() {
                 input: fileStream,
             });
 
-            const metricsMap: MetricsMap = {};
+            const metricsMap: metrics.MetricsMap = {};
             for await (const line of rl) {
                 if (!line.trim()) continue; // Skip empty lines
 
@@ -554,11 +491,11 @@ async function updateMetrics() {
                 if (!route || !blobId) continue; // Skip lines with missing URL fragments
 
                 // Convert route string to Route type.
-                if (!isValidRoute(route)) {
+                if (!metrics.isValidRoute(route)) {
                     console.error('Invalid route:', route);
                     continue; // Skip lines with non-supported route
                 }
-                const routeType = route as Route;
+                const routeType = route as metrics.Route;
 
                 // TODO Sanity check the blobId.
 
@@ -652,8 +589,8 @@ async function updateMetrics() {
                 // Remove elements in sizes that are zero.
                 // At least one element should exists.
                 for (const route in blobMetrics.sizes) {
-                    if (blobMetrics.sizes[route as Route] === 0) {
-                        delete blobMetrics.sizes[route as Route];
+                    if (blobMetrics.sizes[route as metrics.Route] === 0) {
+                        delete blobMetrics.sizes[route as metrics.Route];
                     }
                 }
                 if (Object.keys(blobMetrics.sizes).length === 0) {
@@ -665,7 +602,7 @@ async function updateMetrics() {
                 const prefix2 = blobId.slice(2, 4);
                 const metricsDir = path.join(HOME_DIR, 'cache', prefix1, prefix2);
                 const metricsFilePath = path.join(metricsDir, `${blobId}.metrics`);
-                let fileMetrics: Metrics | undefined = undefined;
+                let fileMetrics: metrics.Metrics | undefined = undefined;
                 if (!fs.existsSync(metricsDir)) {
                     // That should never happen, but just in case...
                     fs.mkdirSync(metricsDir, { recursive: true });
@@ -711,7 +648,7 @@ async function updateMetrics() {
                     fileMetrics.sizes = blobMetrics.sizes;
                 } else {
                     for (const [route, size] of Object.entries(blobMetrics.sizes)) {
-                        const routeType = route as Route;
+                        const routeType = route as metrics.Route;
                         if (size > 0 && size > (fileMetrics.sizes[routeType] || 0)) {
                             fileMetrics.sizes[routeType] = size;
                         }
@@ -725,7 +662,7 @@ async function updateMetrics() {
                         const dayMetrics = blobMetrics.daily[day];
                         for (const route in dayMetrics) {
                             if (Object.prototype.hasOwnProperty.call(dayMetrics, route)) {
-                                const routeMetrics = dayMetrics[route as Route];
+                                const routeMetrics = dayMetrics[route as metrics.Route];
                                 if (routeMetrics) {
                                     delete routeMetrics.visitors_set;
                                 }
@@ -747,7 +684,7 @@ async function updateMetrics() {
                             fileMetrics.daily[day] = fileMetricsDay;
                         }
                         for (const route in dayMetrics) {
-                            const routeType = route as Route;
+                            const routeType = route as metrics.Route;
                             fileMetricsDay[routeType] = dayMetrics[routeType];
                         }
                     }

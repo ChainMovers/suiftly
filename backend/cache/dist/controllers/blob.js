@@ -1,8 +1,8 @@
 import { spawn } from 'child_process';
 import * as fs from 'fs';
 import path from 'path';
-import { getIdPrefixes } from '../utils/strings.js';
-import { isValidBlobId } from '../utils/validation.js';
+import { isValidBlobId } from '../common/blob.js';
+import { getIdPrefixes } from '../common/strings.js';
 // Test Blob Info
 //
 // MIME type: image/png
