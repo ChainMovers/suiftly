@@ -3,7 +3,20 @@
     "remoteCache": {
         "signature": true
     },
-    "globalEnv": ["HOME", "BLOB_CACHE_CONTROL", "PORT"],
+    "globalEnv": [
+        "HOME",
+        "USERPROFILE",
+        "BLOB_CACHE_CONTROL",
+        "PORT",
+        "CDN_METRICS_ACCESS_KEY",
+        "CDN_METRICS_PREFIX_URL",
+        "CDN_METRICS_SUFFIX_URL",
+        "CDN_METRICS_DIR",
+        "CDN_METRICS_DOWNLOAD_DIR",
+        "CDN_METRICS_UNZIP_DIR",
+        "CDN_METRICS_RECENT_DIR",
+        "CDN_METRICS_ARCHIVE_DIR"
+    ],
     "tasks": {
         "build": {
             "dependsOn": [

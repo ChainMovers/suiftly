@@ -16,6 +16,8 @@
     "license": "Apache 2.0",
     "dependencies": {
         "@types/node": "^22",
+        "async-mutex": "^0.5.0",
+        "axios": "^1.7.6",
         "dotenv": "^16.4.5",
         "metrics": "link:",
         "node-cron": "^3.0.3",
@@ -24,6 +26,8 @@
         "unzipper": "^0.12.3"
     },
     "devDependencies": {
+        "@types/node-cron": "^3.0",
+        "@types/unzipper": "^0.10.10",
         "rimraf": "^6.0.1",
         "tsc-alias": "^1.8.10",
         "tsx": "^4.17.0"
