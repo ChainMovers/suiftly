@@ -45,6 +45,42 @@ const EXPIRATION_RECENT_DIR = 40 * 24 * 60 * 60 * 1000; // 40 days in millisecon
 const EXPIRATION_UNZIP_DIR = 40 * 24 * 60 * 60 * 1000;
 const EXPIRATION_DOWNLOAD_DIR = 37 * 24 * 60 * 60 * 1000; // 37 days in milliseconds
 const readdir = promisify(fs.readdir);
+// Util function to sort object keys (in-place).
+// Handles nested objects and arrays recursively.
+// Useful to sort prior to JSON.stringify
+function sortObjectKeys(obj) {
+    if (typeof obj !== 'object' || obj === null) {
+        return;
+    }
+    if (Array.isArray(obj)) {
+        obj.forEach(sortObjectKeys);
+        return;
+    }
+    const keys = Object.keys(obj);
+    const sortedKeys = [...keys].sort();
+    // Check if the keys are already sorted
+    let isSorted = true;
+    for (let i = 0; i < keys.length; i++) {
+        if (keys[i] !== sortedKeys[i]) {
+            isSorted = false;
+            break;
+        }
+    }
+    if (!isSorted) {
+        sortedKeys.forEach(key => {
+            const value = obj[key];
+            delete obj[key];
+            obj[key] = value;
+            sortObjectKeys(value);
+        });
+    }
+    else {
+        // If already sorted, still need to sort nested objects
+        keys.forEach(key => {
+            sortObjectKeys(obj[key]);
+        });
+    }
+}
 // Load more .env specific to this app (and interpolate $HOME)
 const HOME_DIR = process.env.HOME || process.env.USERPROFILE || '';
 dotenv.config({ path: path.join(HOME_DIR, 'suiftly-ops', 'dotenv', '.env.metrics') });
@@ -217,7 +253,8 @@ async function unzipFiles() {
             continue;
         const dateString = file.replace('.gz', '');
         const recentDir = path.join(RECENT_DIR, dateString);
-        if (fs.existsSync(recentDir)) {
+        const recentDirDone = path.join(RECENT_DIR, `${dateString}.done`);
+        if (fs.existsSync(recentDir) || fs.existsSync(recentDirDone)) {
             // Already processed
             continue;
         }
@@ -286,7 +323,6 @@ async function downloadFile(url, outputPath) {
         if (ACCESS_KEY) {
             headers['AccessKey'] = ACCESS_KEY;
         }
-        console.log('Downloading:', url, outputPath);
         const response = await axios({
             decompress: false,
             headers: headers,
@@ -295,13 +331,17 @@ async function downloadFile(url, outputPath) {
             timeout: 10000,
             url: url,
         });
-        console.log('Response Headers:', response.headers);
-        console.log('Response Status:', response.status);
+        if (response.status !== 200) {
+            console.log('Response Headers:', response.headers);
+            console.log('Response Status:', response.status);
+            return;
+        }
         // Do nothing if the length in the response header is 0
-        // This is normal if there is no stats yet for the day.
+        // This is normal when there is no stats yet for the day.
         if (response.headers['content-length'] === '0') {
             return;
         }
+        console.log('Downloading:', url, outputPath);
         const fileStream = fs.createWriteStream(outputPath);
         await pipeline(response.data, fileStream)
             .then(() => console.log('Download complete'))
@@ -485,12 +525,10 @@ async function updateMetrics() {
                 }
                 // Track unique visitors based on remoteIp
                 if (!routeMetrics.visitors_set) {
-                    console.log('First visitor:', remoteIp);
                     routeMetrics.visitors_set = new Set([remoteIp]);
                     routeMetrics.visitors = 1;
                 }
                 else if (!routeMetrics.visitors_set.has(remoteIp)) {
-                    console.log('New visitor:', remoteIp);
                     routeMetrics.visitors_set.add(remoteIp);
                     routeMetrics.visitors += 1;
                 }
@@ -628,6 +666,10 @@ async function updateMetrics() {
                         }
                     }
                 }
+                // Sort the object keys before writing to file
+                // This has the benefit of consistency AND
+                // keep timeseries in chronological order.
+                sortObjectKeys(fileMetrics);
                 // Write into a temporary file and rename it to the final file.
                 const metricsFilePathTmp = `${metricsFilePath}.tmp`;
                 await fs.promises.writeFile(metricsFilePathTmp, JSON.stringify(fileMetrics, null, 2));
@@ -635,7 +677,7 @@ async function updateMetrics() {
             } // end for(blobId)
             const doneFilePath = `${filePath}.done`;
             await fs.promises.rename(filePath, doneFilePath);
-            console.log(`${filePath} metrics updated`);
+            console.log(`${filePath} metrics processing completed`);
         } // end for(file)
     }
     catch (err) {
