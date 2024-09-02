@@ -18,11 +18,12 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-body, #root {
+body,
+#root {
   display: flex;
   flex-direction: column;
-  justify-content:center;
-  align-items:center;
+  justify-content: center;
+  align-items: center;
   min-width: 100%;
   min-height: 100vh;
 }
@@ -40,3 +41,34 @@ body, #root {
   }
 }
 /* ~ Custom styles where it's not possible to use Tailwind classes. */
+.demo-image-container {
+  display: flex;
+  gap: 20px;
+}
+
+.code-section {
+  flex: 1;
+}
+
+.image-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ccc;
+  width: 128px;
+  height: 128px;
+}
+
+.run-code-button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.run-code-button:hover {
+  background-color: #0056b3;
+}
