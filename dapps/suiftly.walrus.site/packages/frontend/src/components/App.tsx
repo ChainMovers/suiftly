@@ -1,7 +1,10 @@
 import { FC, useEffect, useRef } from 'react'
-import GreetingForm from '~~/components/GreetingForm'
+{
+  /*import GreetingForm from '~~/components/GreetingForm'*/
+}
 import Layout from '~~/components/layout/Layout'
 import NetworkSupportChecker from './NetworkSupportChecker'
+import { fetchBlob } from '@suiftly/core'
 
 // A fetchBlob() async function that take a single "blobID" string argument.
 // It should return a promise that resolves to the blob data (a standard JS
@@ -18,7 +21,6 @@ import NetworkSupportChecker from './NetworkSupportChecker'
 // Example usage:
 //    const blob = await fetchBlob('some-blob-id')
 
-
 const App: FC = () => {
   // TODO Just proof-of-concept... need to design this way better!!!!
   const fetchInitiated1 = useRef(false)
@@ -31,7 +33,7 @@ const App: FC = () => {
 
     if (imageContainer1 && !fetchInitiated1.current) {
       fetchInitiated1.current = true
-      fetchBlob(blobID, { source: 'walrus' })
+      fetchBlob(blobID, { allowSuiftly: false })
         .then((blob) => {
           const url = URL.createObjectURL(blob)
           const img = document.createElement('img')
@@ -54,7 +56,7 @@ const App: FC = () => {
 
     if (imageContainer2 && !fetchInitiated2.current) {
       fetchInitiated2.current = true
-      fetchBlob(blobID, { source: 'suiftly' })
+      fetchBlob(blobID, { allowSuiftly: true })
         .then((blob) => {
           const url = URL.createObjectURL(blob)
           const img = document.createElement('img')
@@ -96,17 +98,15 @@ const App: FC = () => {
     <Layout>
       <NetworkSupportChecker />
       <div className="justify-content flex flex-grow flex-col items-center justify-center rounded-md p-3">
-        <GreetingForm />
+        {/*<GreetingForm />*/}
 
-        {/* fetchBlob(blobID, { type: "suiftly"})
         <div
           id="image-container-suiftly"
           style={{ width: '128px', height: '128px' }}
         >
           <p>Loading image...</p>
-        </div>*/}
+        </div>
 
-        {/* fetchBlob(blobID, { type: "walrus"}) */}
         <div
           id="image-container-walrus"
           style={{ width: '128px', height: '128px' }}
