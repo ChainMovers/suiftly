@@ -12,7 +12,7 @@ import { getIdPrefixes } from '../common/strings.js';
 // Encoded size (including metadata): 62.0 MiB
 // Sui object ID: 0x0ebad3b13ee9bc64f8d6370e71d3408a43febaa017a309d2367117afe144ae8c
 // Cache-Control value initialized once
-//const viewCacheControl = process.env.VIEW_CACHE_CONTROL || 'public, max-age=10';
+const viewCacheControl = process.env.VIEW_CACHE_CONTROL || 'public, max-age=10';
 export const getView = async (req, res) => {
     const { id = '' } = req.params;
     // Request validation
@@ -97,6 +97,10 @@ export const getView = async (req, res) => {
         // Read the metrics file. Can fail but won't throw an error.
         const metrics = await loadMetricsFile(metricsPath, { verbose: false });
         const isValidMetrics = isValidMetricsType(metrics, { verbose: false });
+        const headers = {
+            'Cache-Control': viewCacheControl,
+            'Content-Type': 'text/html',
+        };
         if (!isValidMetrics) {
             const html = `
             <!DOCTYPE html>
@@ -111,6 +115,7 @@ export const getView = async (req, res) => {
             </html>
         `;
             // Send the HTML response
+            res.set(headers);
             res.send(html);
             return;
         }
@@ -234,6 +239,7 @@ export const getView = async (req, res) => {
             </html>
         `;
         // Send the HTML response
+        res.set(headers);
         res.send(html);
     }
     catch (error) {

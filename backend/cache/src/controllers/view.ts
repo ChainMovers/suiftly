@@ -16,7 +16,7 @@ import { getIdPrefixes } from '@/common/strings';
 // Sui object ID: 0x0ebad3b13ee9bc64f8d6370e71d3408a43febaa017a309d2367117afe144ae8c
 
 // Cache-Control value initialized once
-//const viewCacheControl = process.env.VIEW_CACHE_CONTROL || 'public, max-age=10';
+const viewCacheControl = process.env.VIEW_CACHE_CONTROL || 'public, max-age=10';
 
 export const getView = async (req: Request, res: Response) => {
     const { id = '' } = req.params;
@@ -104,6 +104,11 @@ export const getView = async (req: Request, res: Response) => {
         const metrics = await loadMetricsFile(metricsPath, { verbose: false });
         const isValidMetrics = isValidMetricsType(metrics, { verbose: false });
 
+        const headers = {
+            'Cache-Control': viewCacheControl,
+            'Content-Type': 'text/html',
+        };
+
         if (!isValidMetrics) {
             const html = `
             <!DOCTYPE html>
@@ -118,6 +123,7 @@ export const getView = async (req: Request, res: Response) => {
             </html>
         `;
             // Send the HTML response
+            res.set(headers);
             res.send(html);
             return;
         }
@@ -247,6 +253,7 @@ export const getView = async (req: Request, res: Response) => {
         `;
 
         // Send the HTML response
+        res.set(headers);
         res.send(html);
     } catch (error) {
         console.error('Error reading metrics:', error);
