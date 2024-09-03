@@ -1,6 +1,6 @@
 {
     "name": "@suiftly/core",
-    "version": "0.0.7",
+    "version": "0.0.9",
     "homepage": "https://suiftly.io",
     "description": "Common low level functions for Suiftly.io",
     "exports": {
@@ -42,7 +42,7 @@
         "test:treeshakability:native": "agadoo dist/index.native.mjs",
         "test:treeshakability:node": "agadoo dist/index.node.mjs",
         "test:typecheck": "tsc --noEmit",
-        "test:unit:browser": "TERM_OVERRIDE=\"${TURBO_HASH:+dumb}\" TERM=${TERM_OVERRIDE:-$TERM} jest -c ../../node_modules/@suiftly/test-config/jest-unit.config.browser.ts --rootDir . --silent",
+        "test:unit:browser": "TERM_OVERRIDE=\"${TURBO_HASH:+dumb}\" TERM=${TERM_OVERRIDE:-$TERM} jest -c ../../node_modules/@suiftly/test-config/jest-unit.config.browser.ts --rootDir .",
         "test:unit:node": "TERM_OVERRIDE=\"${TURBO_HASH:+dumb}\" TERM=${TERM_OVERRIDE:-$TERM} jest -c ../../node_modules/@suiftly/test-config/jest-unit.config.node.ts --rootDir . --silent"
     },
     "keywords": [

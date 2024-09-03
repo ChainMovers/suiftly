@@ -72,10 +72,17 @@ export async function fetchBlob(blobID: string, options: FetchBlobOptions = {}):
 
     try {
         const allowSuiftly = options.allowSuiftly !== false;
-        const allowWalrus = options.allowWalrus !== false;
+        let allowWalrus = options.allowWalrus !== false;
+
         // Validate parameters
         if (!blobID) {
             throw new Error('Blob ID is required');
+        }
+
+        if (allowWalrus) {
+            // Override user request if NOT called from walrus.site
+            const origin = typeof window !== 'undefined' ? window.location.origin : '';
+            allowWalrus = origin.endsWith('walrus.site');
         }
 
         if (!allowSuiftly && !allowWalrus) {
@@ -83,14 +90,33 @@ export async function fetchBlob(blobID: string, options: FetchBlobOptions = {}):
         }
 
         // TODO Data integity check once Mysten Labs publish the encoding.
+        let cdnResponse: Response | null = null;
+        let fetchError: Error | null = null;
         if (allowSuiftly) {
-            const cdnResponse = await fetch(`https://cdn.suiftly.io/blob/${blobID}`);
-            if (cdnResponse.ok) {
-                const contentType =
-                    options.mimeType || cdnResponse.headers.get('Content-Type') || 'application/octet-stream';
-                return await createBlob(cdnResponse, contentType);
-            } else if (!allowWalrus) {
-                throw new Error(`Failed to fetch suiftly (no fallback): ${cdnResponse.statusText}`);
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 2000); // 2 seconds timeout
+            try {
+                // Will throw AbortError if timeout.
+                cdnResponse = await fetch(`https://cdn.suiftly.io/blob/${blobID}`, { signal: controller.signal });
+                clearTimeout(timeoutId);
+                if (!cdnResponse) {
+                    // Should never happen, but just in case.
+                    throw new Error('cdnResponse unexpectedly null');
+                } else if (cdnResponse.ok) {
+                    const contentType =
+                        options.mimeType || cdnResponse.headers.get('Content-Type') || 'application/octet-stream';
+                    return await createBlob(cdnResponse, contentType);
+                }
+            } catch (error) {
+                if (error instanceof Error) {
+                    fetchError = error;
+                } else {
+                    fetchError = new Error('Unknown error occurred during fetch');
+                }
+            }
+            if (!allowWalrus) {
+                const error = `[${fetchError ? fetchError.message : cdnResponse ? cdnResponse.statusText : 'Unknown error'}]`;
+                throw new Error(`Failed to fetch suiftly (no fallback): ${error}`);
             }
         }
 

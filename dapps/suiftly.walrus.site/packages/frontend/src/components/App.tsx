@@ -5,7 +5,7 @@ import Layout from '~~/components/layout/Layout'
 }
 import { fetchBlob } from '@suiftly/core'
 import DemoImage from './DemoImage'
-import { Link, Text, Flex } from '@radix-ui/themes'
+import { Link, Text } from '@radix-ui/themes'
 import LabeledLinkSuiftly from './LabeledLinkSuiftly'
 import BlobIdInput from './BlobIdInput'
 import LabeledLink from './LabeledLink'

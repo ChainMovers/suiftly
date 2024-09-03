@@ -81,8 +81,5 @@
   },
   "bugs": {
     "url": "https://github.com/kkomelin/sui-dapp-starter/issues"
-  },
-  "dependencies": {
-    "@suiftly/core": "^0.0.7"
   }
 }
