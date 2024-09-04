@@ -122,13 +122,13 @@ export const getView = async (req, res) => {
         const today = new Date();
         const last30Days = Array.from({ length: 30 }, (_, i) => format(subDays(today, i + 1), 'yyyy-MM-dd')).reverse();
         // Calculate CDN Hits Percentage
-        const blobHits = [];
+        const blobViews = [];
         const blobVisitors = [];
         const blobCdnHitsPercentage = [];
         last30Days.forEach(date => {
             // If the date is not in the metrics, use a placeholder
             const dayMetrics = (isValidMetrics && metrics.daily[date]?.blob) || { hits: 0, hitsEdge: 0, visitors: 0 };
-            blobHits.push(dayMetrics.hits);
+            blobViews.push(dayMetrics.hits);
             blobVisitors.push(dayMetrics.visitors);
             const cdnHitsPercentage = dayMetrics.hits === 0 ? 0 : (dayMetrics.hitsEdge / dayMetrics.hits) * 100;
             blobCdnHitsPercentage.push(cdnHitsPercentage);
@@ -156,7 +156,7 @@ export const getView = async (req, res) => {
                 </style>
             </head>
             <body>
-                <h2>Dashboard for ${id}</h2>
+                <h2>Metrics for ${id}</h2>
                 <div class="chart-container">
                   <canvas id="hitsChart"></canvas>
                 </div>
@@ -168,7 +168,7 @@ export const getView = async (req, res) => {
                 </div>
                 <script>
                     const dates = ${JSON.stringify(last30Days)};
-                    const blobHits = ${JSON.stringify(blobHits)};
+                    const blobViews = ${JSON.stringify(blobViews)};
                     const blobVisitors = ${JSON.stringify(blobVisitors)};
                     const blobCdnHitsPercentage = ${JSON.stringify(blobCdnHitsPercentage)};
 
@@ -178,8 +178,8 @@ export const getView = async (req, res) => {
                         data: {
                             labels: dates,
                             datasets: [{
-                                label: 'Hits',
-                                data: blobHits,
+                                label: 'Views',
+                                data: blobViews,
                                 borderColor: 'rgba(75, 192, 192, 1)',
                                 borderWidth: 1
                             }]
@@ -235,6 +235,9 @@ export const getView = async (req, res) => {
                         }
                     });
                 </script>
+                <div style="text-align: center; margin-top: 20px;">
+                    <a href="https://cdn.suiftly.io/metrics/${id}">JSON Metrics</a>
+                </div>
             </body>
             </html>
         `;
