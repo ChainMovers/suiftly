@@ -22,14 +22,15 @@ const SIZE_LIMIT = 209715200;
 export const getBlob = async (req: Request, res: Response) => {
     const { id = '' } = req.params;
 
+
     // Request validation
     try {
         await isValidBlobId(id);
     } catch (error) {
         if (error instanceof Error) {
-            res.status(400).send(error.message);
+            return res.status(400).send(error.message);
         } else {
-            res.status(400).send('Unknown error');
+            return res.status(400).send('Invalid request');
         }
     }
 
@@ -61,8 +62,9 @@ export const getBlob = async (req: Request, res: Response) => {
     let mime_parsed: string | undefined = undefined;
     let blob_size: number | undefined = undefined;
     let attempts = 0;
+    const ATTEMPTS_LIMIT = 3;
 
-    while (!mime_parsed && attempts < 3) {
+    while (!mime_parsed && attempts < ATTEMPTS_LIMIT) {
         try {
             await fs.promises.access(jsonPath, fs.constants.F_OK);
 
@@ -133,20 +135,29 @@ export const getBlob = async (req: Request, res: Response) => {
                 });
             });
 
-            if (status_code === 0) {
-                // Success.
-            } else if (status_code === 1) {
-                return res.status(404).send('Blob is not stored on Walrus');
-            } else if (status_code === 2) {
-                return res.status(404).send('Blob is not stored on Suiftly');
-            } else if (status_code === 3) {
-                return res.status(404).send('Blob MIME type not supported by Suiftly');
-            } else if (status_code === 4) {
-                return res.status(404).send(`Blob size not supported by Suiftly (${SIZE_LIMIT} limit)`);
-            } else if (starting_shell_process_failed) {
-                return res.status(500).send('Internal Server Error (shell call)');
-            } else {
-                return res.status(500).send(`Internal Server Error (${status_code})`);
+            try {
+                // Fail the request only on error while the last attempt.
+                if (attempts >= ATTEMPTS_LIMIT - 1) {
+                    if (status_code === 0) {
+                        // Success.
+                    } else if (status_code === 1) {
+                        return res.status(404).send('Blob is not stored on Walrus');
+                    } else if (status_code === 2) {
+                        return res.status(404).send('Blob is not stored on Suiftly');
+                    } else if (status_code === 3) {
+                        return res.status(404).send('Blob MIME type not supported by Suiftly');
+                    } else if (status_code === 4) {
+                        return res.status(404).send(`Blob size not supported by Suiftly (${SIZE_LIMIT} limit)`);
+                    } else if (starting_shell_process_failed) {
+                        return res.status(500).send('Internal Server Error (shell call)');
+                    } else {
+                        return res.status(500).send(`Internal Server Error (${status_code})`);
+                    }
+                }
+            } catch (err) {
+                if (attempts >= ATTEMPTS_LIMIT - 1) {
+                    return res.status(500).send('Internal Server Error (loading blob)');
+                }
             }
         }
         attempts++;
