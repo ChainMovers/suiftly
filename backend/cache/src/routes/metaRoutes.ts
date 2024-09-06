@@ -1,14 +1,14 @@
 import express from 'express';
 
-import { getMetrics } from '@/controllers/metrics';
+import { getMeta } from '@/controllers/meta';
 
-export const metricsRoutes = express.Router();
+export const metaRoutes = express.Router();
 
-metricsRoutes.get('/', (req, res) => {
+metaRoutes.get('/', (req, res) => {
     res.set('Cache-Control', 'public, max-age=86400');
     res.send(
         `Blob ID missing.<br><br> Useage: <b>https://cdn.suiftly.io${req.baseUrl}/<i>&lt;your_blob_id&gt;</i></b>`,
     );
 });
 
-metricsRoutes.get('/:id', getMetrics);
+metaRoutes.get('/:id', getMeta);

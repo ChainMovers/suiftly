@@ -4,9 +4,10 @@ import cors from 'cors';
 import express from 'express';
 
 import { blobRoutes } from '@/routes/blobRoutes';
-
-import { metricsRoutes } from './routes/metricsRoutes';
-import { viewRoutes } from './routes/viewRoutes';
+import { iconRoutes } from '@/routes/iconRoutes';
+import { metaRoutes } from '@/routes/metaRoutes';
+import { metricsRoutes } from '@/routes/metricsRoutes';
+import { viewRoutes } from '@/routes/viewRoutes';
 
 const port = process.env.PORT || 3000;
 
@@ -36,6 +37,10 @@ app.get('/', (req, res) => {
 app.use('/blob', blobRoutes);
 app.use('/metrics', metricsRoutes);
 app.use('/view', viewRoutes);
+app.use('/meta', metaRoutes);
+app.use('/icon48x48', iconRoutes);
+app.use('/icon96x96', iconRoutes);
+app.use('/icon256x256', iconRoutes);
 
 app.listen(port, () => {
     console.log(`App listening on port: ${port}`);

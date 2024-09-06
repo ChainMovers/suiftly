@@ -2,6 +2,8 @@ import 'dotenv/config';
 import cors from 'cors';
 import express from 'express';
 import { blobRoutes } from './routes/blobRoutes.js';
+import { iconRoutes } from './routes/iconRoutes.js';
+import { metaRoutes } from './routes/metaRoutes.js';
 import { metricsRoutes } from './routes/metricsRoutes.js';
 import { viewRoutes } from './routes/viewRoutes.js';
 const port = process.env.PORT || 3000;
@@ -21,6 +23,10 @@ app.get('/', (req, res) => {
 app.use('/blob', blobRoutes);
 app.use('/metrics', metricsRoutes);
 app.use('/view', viewRoutes);
+app.use('/meta', metaRoutes);
+app.use('/icon48x48', iconRoutes);
+app.use('/icon96x96', iconRoutes);
+app.use('/icon256x256', iconRoutes);
 app.listen(port, () => {
     console.log(`App listening on port: ${port}`);
 });
