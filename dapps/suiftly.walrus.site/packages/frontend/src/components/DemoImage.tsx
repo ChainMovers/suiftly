@@ -1,5 +1,9 @@
 import React, { useState } from 'react'
 import { Button, Flex, Text } from '@radix-ui/themes'
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+import { a11yDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
+// For styles see:
+//  https://github.com/react-syntax-highlighter/react-syntax-highlighter/blob/master/AVAILABLE_STYLES_PRISM.MD
 
 interface DemoImageProps {
   code: string
@@ -33,16 +37,13 @@ const DemoImage: React.FC<DemoImageProps> = ({ code, onRunCode }) => {
       align="center"
     >
       <Flex className="code-section" direction="column" gap="1" p="3">
-        <pre
-          className="code-block"
-          style={{
-            backgroundColor: '#f3f4f6',
-            padding: '3px',
-            borderRadius: '10px',
-          }}
+        <SyntaxHighlighter
+          language="typescript"
+          style={a11yDark}
+          customStyle={{ fontSize: '1.1em', margin: 0, padding: '0 20px 0 0' }}
         >
-          <code>{code}</code>
-        </pre>
+          {code}
+        </SyntaxHighlighter>
       </Flex>
       <Flex direction="column" gap="2" align="center">
         <Flex

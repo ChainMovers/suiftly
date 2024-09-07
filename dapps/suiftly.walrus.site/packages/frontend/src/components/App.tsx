@@ -1,11 +1,11 @@
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import Layout from '~~/components/layout/Layout'
 {
   /*import NetworkSupportChecker from './NetworkSupportChecker'*/
 }
 import { fetchBlob } from '@suiftly/core'
 import DemoImage from './DemoImage'
-import { Link, Text } from '@radix-ui/themes'
+import { Button, Flex, Link, Text } from '@radix-ui/themes'
 import LabeledLinkSuiftly from './LabeledLinkSuiftly'
 import BlobIdInput from './BlobIdInput'
 import LabeledLink from './LabeledLink'
@@ -13,44 +13,73 @@ import LabeledLink from './LabeledLink'
 const App: FC = () => {
   const defaultBlobId = 'fK7v0bft1JqVbxQaM_KJAYkejbY9FgU9doqZwg7smw8'
   const [blobId, setBlobId] = useState(defaultBlobId)
+  const [showIcons, setShowIcons] = useState(false)
 
-  const handleRunCode = () => {
-    const imageContainer = document.getElementById('image-container')
-    if (imageContainer) {
-      fetchBlob(blobId)
-        .then((blob) => {
-          const url = URL.createObjectURL(blob)
+  useEffect(() => {
+    if (showIcons) {
+      const sizes = ['48x48', '96x96', '256x256']
+      for (const size of sizes) {
+        const imageContainer = document.getElementById(
+          `icons-container-${size}`
+        )
+        if (imageContainer) {
+          imageContainer.innerHTML = ''
+          const url = `https://cdn.suiftly.io/icon${size}/${blobId}`
           const img = document.createElement('img')
           img.src = url
-          img.alt = 'Fetched Blob'
-
-          imageContainer.innerHTML = ''
+          img.alt = `Icon ${size}`
+          img.width = parseInt(size.split('x')[0])
+          img.height = parseInt(size.split('x')[1])
+          img.style.marginRight = '10px'
           imageContainer.appendChild(img)
-        })
-        .catch((error) => {
-          console.error('Error fetching walrus blob:', blobId, error)
-          if (imageContainer) {
-            imageContainer.innerHTML = '<p>Error loading walrus image</p>'
-          }
-        })
+        }
+      }
+    }
+  }, [showIcons, blobId])
+
+  useEffect(() => {
+    setShowIcons(false)
+  }, [blobId])
+
+  const handleShowIcons = () => {
+    setShowIcons(true)
+  }
+
+  const handleRunCode = async () => {
+    const imageContainer = document.getElementById('image-container')
+    if (imageContainer) {
+      try {
+        const blob = await fetchBlob(blobId)
+        const url = URL.createObjectURL(blob)
+        const img = document.createElement('img')
+        img.src = url
+        img.alt = 'Fetched Blob'
+
+        imageContainer.innerHTML = ''
+        imageContainer.appendChild(img)
+      } catch (error) {
+        console.error('Error fetching walrus blob:', blobId, error)
+        if (imageContainer) {
+          imageContainer.innerHTML = '<p>Error loading walrus image</p>'
+        }
+      }
     }
   }
 
   const codeSnippet = `
+  const blobId = '${blobId}'
+  try {
+    const blob = await fetchBlob(blobId)
+    // Add the fetched blob to the DOM
+    const url = URL.createObjectURL(blob)
+    const img = document.createElement('img')
+    img.src = url
+    img.alt = 'Fetched Blob'
     const imageContainer = document.getElementById('image-container')
-    if (imageContainer) {
-      const blobId = '${blobId}'
-      fetchBlob(blobId)
-        .then((blob) => {
-          const img = document.createElement('img')
-          img.src = URL.createObjectURL(blob)
-          img.alt = 'Fetched Blob'
-          imageContainer.appendChild(img)
-        })
-        .catch((error) => {
-          console.error('Error fetching:', blobId, error)
-        })
-    }
+    imageContainer.appendChild(img)
+  } catch (error) {
+    console.error('Error fetching', blobId, error)
+  }
   `
 
   return (
@@ -75,8 +104,37 @@ const App: FC = () => {
           <Text>Direct Links (Trust your CDN)</Text>
         </h2>
         <LabeledLinkSuiftly label="blob" blobId={blobId} />
-        <LabeledLinkSuiftly label="metrics" blobId={blobId} />
+        <LabeledLinkSuiftly label="meta" blobId={blobId} />
+
+        <br />
         <LabeledLinkSuiftly label="view" blobId={blobId} />
+        <LabeledLinkSuiftly label="metrics" blobId={blobId} />
+        <br />
+        <LabeledLinkSuiftly label="icon48x48" blobId={blobId} />
+        <LabeledLinkSuiftly label="icon96x96" blobId={blobId} />
+        <LabeledLinkSuiftly label="icon256x256" blobId={blobId} />
+        <br />
+        {!showIcons && (
+          <div style={{ textAlign: 'center' }}>
+            <Button onClick={handleShowIcons}>Show Icons</Button>
+          </div>
+        )}
+        {showIcons && (
+          <Flex direction="row" justify="center" align="center" gap="2" mt="4">
+            <div id="icons-container-48x48"></div>
+            <div id="icons-container-96x96"></div>
+            <div id="icons-container-256x256"></div>
+          </Flex>
+        )}
+        <div
+          id="icons-container"
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            marginTop: '20px',
+          }}
+        ></div>
+        <br />
         <br />
         <h2 className="text-xl font-semibold">
           <Text>NPM Package (Trust your CDN... but verify)</Text>

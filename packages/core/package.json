@@ -1,6 +1,6 @@
 {
     "name": "@suiftly/core",
-    "version": "0.0.9",
+    "version": "0.0.10",
     "homepage": "https://suiftly.io",
     "description": "Common low level functions for Suiftly.io",
     "exports": {
