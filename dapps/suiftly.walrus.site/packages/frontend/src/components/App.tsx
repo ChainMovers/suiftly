@@ -114,26 +114,31 @@ const App: FC = () => {
         <LabeledLinkSuiftly label="icon96x96" blobId={blobId} />
         <LabeledLinkSuiftly label="icon256x256" blobId={blobId} />
         <br />
-        {!showIcons && (
-          <div style={{ textAlign: 'center' }}>
-            <Button onClick={handleShowIcons}>Show Icons</Button>
-          </div>
-        )}
-        {showIcons && (
-          <Flex direction="row" justify="center" align="center" gap="2" mt="4">
-            <div id="icons-container-48x48"></div>
-            <div id="icons-container-96x96"></div>
-            <div id="icons-container-256x256"></div>
-          </Flex>
-        )}
-        <div
-          id="icons-container"
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            marginTop: '20px',
-          }}
-        ></div>
+        <Flex
+          direction="column"
+          align="center"
+          justify="center"
+          style={{ height: '256px' }}
+        >
+          {!showIcons && (
+            <div style={{ textAlign: 'center' }}>
+              <Button onClick={handleShowIcons}>Load Icons</Button>
+            </div>
+          )}
+          {showIcons && (
+            <Flex
+              direction="row"
+              justify="center"
+              align="center"
+              gap="2"
+              mt="4"
+            >
+              <div id="icons-container-48x48"></div>
+              <div id="icons-container-96x96"></div>
+              <div id="icons-container-256x256"></div>
+            </Flex>
+          )}
+        </Flex>
         <br />
         <br />
         <h2 className="text-xl font-semibold">
