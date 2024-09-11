@@ -1,20 +1,29 @@
 
 # What is Suiftly?
+(Documentation is work-in-progress).
 
-Adds fast Walrus loading to your Web2/Web3 sites with:
+Add Walrus blob loading to your apps with:
 
   (1) Direct CDN links (e.g. `https://cdn.suiftly.io/blob/myblob`)
-  (2) Safer open-source NPM JS and react package (recommended)
+
+  (2) Safer open-source NPM and react packages (recommended)
+
   (3) suiftly.site optimized portal (future)
 
-The NPM packages provides:
-  - Automatic CDN to Walrus failover
-  - React components helper (e.g. `<ImageBlob src="..." blob_id="..." />`)
-  - "Trust your CDN... but verify". Makes your webapp validate itself the CDN response.
+# NPM package (Core Utlities)
+Do `npm install @suiftly/core`
 
+More info: https://www.npmjs.com/package/@suiftly/core
 
-Project Status: **Planning**
+# NPM package (React)
+Work-in-progress, not yet released.
 
+# Demo
+Video: https://youtu.be/ldTN7w4Du8o
+
+Walrus Site: https://suiftly.walrus.site
+
+# Need Help?
 Join the discussion on [Discord](https://discord.com/invite/Erb6SwsVbH)
 
 

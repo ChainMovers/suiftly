@@ -16,6 +16,10 @@ First click is slower to perform one-time aggregation and caching for subsequent
 
 Suiftly returns proper MIME Content-Type header (e.g. image/png).
 
+More tricks demonstrated here:
+   https://cdn.suiftly.io/blob/README.md
+
+
 # NPM Packages
 
 See [@suiftly/core](https://www.npmjs.com/package/@suiftly/core)
