@@ -4,8 +4,6 @@ Load most Walrus blobs in less than 100 milliseconds!
 
 Join the discussion on [Discord](https://discord.com/invite/Erb6SwsVbH)
 
-<div align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/ldTN7w4Du8o" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div></div>
-
 # Direct Links
 
 You can load any blob with a direct link:
@@ -37,6 +35,9 @@ Features:
 
 Installation:
 `npm install @suiftly/core`
+
+# Video Demo
+[![Suiftly Demo](https://github.com/user-attachments/assets/a9fd6b26-83e0-444f-bb9f-d2660ac2cf28)](https://www.youtube.com/watch?v=ldTN7w4Du8o)
 
 # Thank you!
 
