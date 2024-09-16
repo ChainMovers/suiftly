@@ -4,6 +4,8 @@ Load most Walrus blobs in less than 100 milliseconds!
 
 Join the discussion on [Discord](https://discord.com/invite/Erb6SwsVbH)
 
+<div align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/ldTN7w4Du8o" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div></div>
+
 # Direct Links
 
 You can load any blob with a direct link:
@@ -17,8 +19,7 @@ First click is slower to perform one-time aggregation and caching for subsequent
 Suiftly returns proper MIME Content-Type header (e.g. image/png).
 
 More tricks demonstrated here:
-   https://cdn.suiftly.io/blob/README.md
-
+   https://suiftly.walrus.site
 
 # NPM Packages
 
