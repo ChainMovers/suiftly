@@ -29,13 +29,22 @@ const main = async () => {
 
   let siteObjectId = await readSiteObjectId(configFilePathFull)
 
+  console.log('Buying test WAL coins from the faucet...')
+  try {
+    execSync(`walrus --wallet ${WALLET_CONFIG_PATH_FULL} get-wal`, {
+      stdio: 'inherit',
+    })
+  } catch (e) {
+    console.warn(e)
+  }
+
   // If the site has not yet been published (no site object ID in the config),
   // then publish the site to Walrus Sites.
   if (siteObjectId == null) {
     console.log('Publishing the app to Walrus Sites...')
-    const exec_command = `site-builder --config ${walrusConfigPathFull} --wallet ${WALLET_CONFIG_PATH_FULL} publish ${sitePathFull}`
-    console.log(`exec: ${exec_command}`)
-    const { stdout, stderr } = await exec(exec_command)
+    const { stdout, stderr } = await exec(
+      `site-builder --config ${walrusConfigPathFull} --wallet ${WALLET_CONFIG_PATH_FULL} publish ${sitePathFull}`
+    )
 
     // Get the site object ID from the publish command output.
     stdout.on('data', async (data) => {
@@ -61,7 +70,8 @@ const main = async () => {
 
     stderr.on('data', async (error) => {
       console.error(error)
-      // Do not exit if the line starts with "[warn]"
+      // Do not exit if it's a warning.
+      // @todo: Find a better way to catch warnings, e.g. by severity level or error code.
       if (error.startsWith('[warn]')) {
         return
       }
