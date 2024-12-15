@@ -17,8 +17,7 @@ First click is slower to perform one-time aggregation and caching for subsequent
 Suiftly returns proper MIME Content-Type header (e.g. image/png).
 
 More tricks demonstrated here:
-   https://cdn.suiftly.io/blob/README.md
-
+   https://suiftly.walrus.site
 
 # NPM Packages
 
@@ -36,6 +35,9 @@ Features:
 
 Installation:
 `npm install @suiftly/core`
+
+# Video Demo
+[![Suiftly Demo](https://github.com/user-attachments/assets/a9fd6b26-83e0-444f-bb9f-d2660ac2cf28)](https://www.youtube.com/watch?v=ldTN7w4Du8o)
 
 # Thank you!
 
