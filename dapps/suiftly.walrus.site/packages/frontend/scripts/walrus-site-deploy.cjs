@@ -29,8 +29,8 @@ const main = async () => {
 
   let siteObjectId = await readSiteObjectId(configFilePathFull)
 
-  console.log('Buying test WAL coins from the faucet...')
   try {
+    console.log('Buying test WAL coins from the faucet...')
     execSync(`walrus --wallet ${WALLET_CONFIG_PATH_FULL} get-wal`, {
       stdio: 'inherit',
     })
@@ -43,7 +43,7 @@ const main = async () => {
   if (siteObjectId == null) {
     console.log('Publishing the app to Walrus Sites...')
     const { stdout, stderr } = await exec(
-      `site-builder --config ${walrusConfigPathFull} --wallet ${WALLET_CONFIG_PATH_FULL} publish ${sitePathFull}`
+      `site-builder --config ${walrusConfigPathFull} --wallet ${WALLET_CONFIG_PATH_FULL} publish ${sitePathFull} --epochs 5`
     )
 
     // Get the site object ID from the publish command output.
