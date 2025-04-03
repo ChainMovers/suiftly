@@ -31,7 +31,7 @@ const main = async () => {
 
   try {
     console.log('Buying test WAL coins from the faucet...')
-    execSync(`walrus --wallet ${WALLET_CONFIG_PATH_FULL} get-wal`, {
+    execSync(`twalrus get-wal`, {
       stdio: 'inherit',
     })
   } catch (e) {
@@ -43,7 +43,7 @@ const main = async () => {
   if (siteObjectId == null) {
     console.log('Publishing the app to Walrus Sites...')
     const { stdout, stderr } = await exec(
-      `site-builder --config ${walrusConfigPathFull} --wallet ${WALLET_CONFIG_PATH_FULL} publish ${sitePathFull} --epochs 5`
+      `tsite publish ${sitePathFull} --epochs 1`
     )
 
     // Get the site object ID from the publish command output.
@@ -93,7 +93,7 @@ const main = async () => {
 
   console.log('Updating the app on Walrus Sites...')
   execSync(
-    `site-builder --config ${walrusConfigPathFull} --wallet ${WALLET_CONFIG_PATH_FULL} update ${sitePathFull} ${siteObjectId}`,
+    `tsite update ${sitePathFull} ${siteObjectId} --epochs 1`,
     { stdio: 'inherit' }
   )
 }
